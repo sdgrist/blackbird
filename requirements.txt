@@ -19,3 +19,6 @@ requests==2.32.4
 rich==14.0.0
 urllib3==2.5.0
 yarl==1.20.1
+fastapi
+uvicorn[standard]
+pydantic
