@@ -22,3 +22,6 @@ yarl==1.20.1
 fastapi
 uvicorn[standard]
 pydantic
+fastapi
+uvicorn[standard]
+pydantic
