@@ -72,3 +72,6 @@ def search(request: SearchRequest):
         "query": request.dict(),
         "results": data,
     }
+fastapi
+uvicorn[standard]
+pydantic
