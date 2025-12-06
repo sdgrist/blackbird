@@ -29,7 +29,6 @@ def search(request: SearchRequest):
             detail="You must provide at least 'username' or 'email'.",
         )
 
-    # Build the Blackbird CLI command
     cmd = ["python", "blackbird.py"]
 
     if request.username:
@@ -37,7 +36,6 @@ def search(request: SearchRequest):
     if request.email:
         cmd += ["--email", request.email]
 
-    # Ask Blackbird to output JSON :contentReference[oaicite:2]{index=2}
     cmd.append("--json")
 
     try:
@@ -45,13 +43,12 @@ def search(request: SearchRequest):
             cmd,
             capture_output=True,
             text=True,
-            timeout=300,  # 5 minutes max
+            timeout=300,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to run Blackbird: {e}")
 
     if result.returncode != 0:
-        # Include just the tail of stderr to avoid huge errors
         err_tail = result.stderr.strip()[-500:]
         raise HTTPException(
             status_code=500,
@@ -59,8 +56,6 @@ def search(request: SearchRequest):
         )
 
     stdout = result.stdout.strip()
-
-    # Blackbird may print banners before JSON. Try to strip leading text.
     first_brace = stdout.find("{")
     if first_brace > 0:
         stdout = stdout[first_brace:]
@@ -68,7 +63,6 @@ def search(request: SearchRequest):
     try:
         data = json.loads(stdout)
     except json.JSONDecodeError:
-        # If parsing fails, return the raw output to help debugging
         raise HTTPException(
             status_code=500,
             detail="Could not parse Blackbird JSON output.",
